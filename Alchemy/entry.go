@@ -191,6 +191,11 @@ func Run(_app *App) {
 	js.Global().Set("js_draw", js.FuncOf(JSDraw))
 
 	js.Global().Set("js_dpad_up", js.FuncOf(JSDpadUp))
+	js.Global().Set("js_dpad_down", js.FuncOf(JSDpadDown))
+	js.Global().Set("js_dpad_left", js.FuncOf(JSDpadLeft))
+	js.Global().Set("js_dpad_right", js.FuncOf(JSDpadRight))
+	js.Global().Set("js_main_button", js.FuncOf(JSMainButton))
+	js.Global().Set("js_side_button", js.FuncOf(JSSideButton))
 
 	// if I put it above the "js_start" then it would take a lot of time to run
 	Cam.Init(*_app)

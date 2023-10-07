@@ -4,6 +4,12 @@
 
     --dpad-width: 40px;
     --dpad-height : 55px;
+
+    --button-offest-pos : 30px;
+    --button-offest-neg : -30px;
+
+    --main-button-size: 70px;
+    --side-button-size: 50px;
 }
 
 body{
@@ -50,11 +56,24 @@ body{
     align-items: center;
     transition: 0.1s;
 }
-.dpad:hover {
-    background: #b7b7b7;
-}
 
 .dpad:active {
+    background: #787878;
+}
+
+.button {
+    background: #d1d1d1;
+    position: absolute;
+    text-align: center;
+    border-radius: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.1s;
+}
+
+
+.button:active {
     background: #787878;
 }
 
@@ -78,6 +97,18 @@ body{
     width: var(--dpad-height);
     height: var(--dpad-width);
     transform: translate(var(--dpad-spacing-pos), 0);
+}
+
+.main-button {
+    width: var(--main-button-size);
+    height: var(--main-button-size);
+    transform: translate(var(--button-offest-neg), var(--button-offest-pos));
+}
+
+.side-button {
+    width: var(--side-button-size);
+    height: var(--side-button-size);
+    transform: translate(var(--button-offest-pos), var(--button-offest-neg));
 }
 
 @media screen and (min-width: 480px) {

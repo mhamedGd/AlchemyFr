@@ -18,10 +18,8 @@
             <a class="dpad right" id="dpad-right">  <p>r</p></a>
         </div>
         <div class="controller-set">
-            <a class="dpad up"   ><p>u</p></a>
-            <a class="dpad down" ><p>d</p></a>
-            <a class="dpad left" ><p>l</p></a>
-            <a class="dpad right"><p>r</p></a>
+            <a class="button main-button" id="main-button"   ><p>A</p></a>
+            <a class="button side-button" id="side-button" ><p>B</p></a>
         </div>
     </div>
     <script type="module" src="./wasm_exec.js"></script>
@@ -36,17 +34,60 @@
         
         const go = new Go();
         var dpad_up = document.getElementById("dpad-up")
+        var dpad_down = document.getElementById("dpad-down")
+        var dpad_left = document.getElementById("dpad-left")
+        var dpad_right = document.getElementById("dpad-right")
+        
+        var main_button = document.getElementById("main-button")
+        var side_button = document.getElementById("side-button")
         
         WebAssembly.instantiateStreaming(fetch('app.wasm'), 
         go.importObject).then((result) => {
             go.run(result.instance);
             
+            //------
             dpad_up.addEventListener("pointerdown", (e) => {
                 js_dpad_up(1)
             })
             dpad_up.addEventListener("pointerup", (e) => {
                 js_dpad_up(0)
             })
+            //------
+            dpad_down.addEventListener("pointerdown", (e) => {
+                js_dpad_down(1)
+            })
+            dpad_down.addEventListener("pointerup", (e) => {
+                js_dpad_down(0)
+            })
+            //------
+            dpad_left.addEventListener("pointerdown", (e) => {
+                js_dpad_left(1)
+            })
+            dpad_left.addEventListener("pointerup", (e) => {
+                js_dpad_left(0)
+            })
+            //------
+            dpad_right.addEventListener("pointerdown", (e) => {
+                js_dpad_right(1)
+            })
+            dpad_right.addEventListener("pointerup", (e) => {
+                js_dpad_right(0)
+            })
+            //------
+            main_button.addEventListener("pointerdown", (e) => {
+                js_main_button(1)
+            })
+            main_button.addEventListener("pointerup", (e) => {
+                js_main_button(0)
+            })
+            //------
+            side_button.addEventListener("pointerdown", (e) => {
+                js_side_button(1)
+            })
+            side_button.addEventListener("pointerup", (e) => {
+                js_side_button(0)
+            })
+            //------
 
             js_start()
 

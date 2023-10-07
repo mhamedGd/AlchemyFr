@@ -16,7 +16,7 @@ func main() {
 	speed := float32(3)
 
 	var inputAxis alchemy.Vector2f = alchemy.Vector2fZero
-	var dpad_modifier float32 = 0.0
+	var dpad_modifier alchemy.Vector2f = alchemy.Vector2fZero
 
 	game := alchemy.App{
 		Width:  800,
@@ -37,23 +37,46 @@ func main() {
 
 			alchemy.Shapes.LineWidth = 1.
 
-			alchemy.DPadUp_Pressed.AddListener(func(i ...int) {
-				dpad_modifier += 1.0
+			alchemy.MainButton_Pressed.AddListener(func(i ...int) {
+				dpad_modifier.Y += 1.0
 			})
-			alchemy.DPadUp_Released.AddListener(func(i ...int) {
-				dpad_modifier -= 1.0
+			alchemy.MainButton_Released.AddListener(func(i ...int) {
+				dpad_modifier.Y -= 1.0
+			})
+
+			alchemy.SideButton_Pressed.AddListener(func(i ...int) {
+				dpad_modifier.Y -= 1.0
+				alchemy.LogF(dpad_modifier.ToString())
+
+			})
+
+			alchemy.SideButton_Released.AddListener(func(i ...int) {
+				dpad_modifier.Y += 1.0
+				alchemy.LogF(dpad_modifier.ToString())
+			})
+
+			alchemy.DPadLeft_Pressed.AddListener(func(i ...int) {
+				dpad_modifier.X -= 1.0
+			})
+			alchemy.DPadLeft_Released.AddListener(func(i ...int) {
+				dpad_modifier.X += 1.0
+			})
+
+			alchemy.DPadRight_Pressed.AddListener(func(i ...int) {
+				dpad_modifier.X += 1.0
+			})
+			alchemy.DPadRight_Released.AddListener(func(i ...int) {
+				dpad_modifier.X -= 1.0
 			})
 
 		},
 		OnUpdate: func(dt float64) {
 			zoomAxis := 500.0 * float32(dt) * (alchemy.GetActionStrength("Zoom In") - alchemy.GetActionStrength("Zoom Out"))
 			alchemy.IncreaseScaleU(zoomAxis)
-
 			inputAxis.Y = alchemy.GetActionStrength("Up") - (alchemy.GetActionStrength("Down"))
 
-			alchemy.LogF("%v", dpad_modifier)
-			velocity.X = alchemy.LerpFloat32(velocity.X, (alchemy.GetActionStrength("Right")-alchemy.GetActionStrength("Left"))*speed, float32(dt)*2.5)
-			velocity.Y = alchemy.LerpFloat32(velocity.Y, (inputAxis.Y+dpad_modifier)*speed, float32(dt)*2.5)
+			velocity.X = alchemy.LerpFloat32(velocity.X, (inputAxis.X+dpad_modifier.X)*speed, float32(dt)*2.5)
+			velocity.Y = alchemy.LerpFloat32(velocity.Y, (inputAxis.Y+dpad_modifier.Y)*speed, float32(dt)*2.5)
 			//alchemy.ScrollView(alchemy.Vector2fRight.Scale(velocity.X * 3.0))
 
 			rotation -= float32(dt*100.0) * velocity.X
