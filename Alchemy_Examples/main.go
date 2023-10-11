@@ -17,7 +17,6 @@ func main() {
 
 	var inputAxis alchemy.Vector2f = alchemy.Vector2fZero
 	var dpad_modifier alchemy.Vector2f = alchemy.Vector2fZero
-
 	game := alchemy.App{
 		Width:  800,
 		Height: 600,
@@ -35,7 +34,9 @@ func main() {
 			alchemy.BindInput("Zoom In", alchemy.KEY_E)
 			alchemy.BindInput("Zoom Out", alchemy.KEY_Q)
 
-			alchemy.Shapes.LineWidth = 1.
+			alchemy.Shapes.LineWidth = 1
+
+			alchemy.LoadPng("g.png")
 
 			alchemy.MainButton_Pressed.AddListener(func(i ...int) {
 				dpad_modifier.Y += 1.0
@@ -71,9 +72,11 @@ func main() {
 
 		},
 		OnUpdate: func(dt float64) {
+
 			zoomAxis := 500.0 * float32(dt) * (alchemy.GetActionStrength("Zoom In") - alchemy.GetActionStrength("Zoom Out"))
 			alchemy.IncreaseScaleU(zoomAxis)
 			inputAxis.Y = alchemy.GetActionStrength("Up") - (alchemy.GetActionStrength("Down"))
+			inputAxis.X = alchemy.GetActionStrength("Right") - (alchemy.GetActionStrength("Left"))
 
 			velocity.X = alchemy.LerpFloat32(velocity.X, (inputAxis.X+dpad_modifier.X)*speed, float32(dt)*2.5)
 			velocity.Y = alchemy.LerpFloat32(velocity.Y, (inputAxis.Y+dpad_modifier.Y)*speed, float32(dt)*2.5)
@@ -97,4 +100,5 @@ func main() {
 	}
 
 	alchemy.Run(&game)
+
 }
