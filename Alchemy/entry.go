@@ -42,6 +42,9 @@ var appRef *App
 
 var Cam Camera2D
 var Shapes ShapeBatch
+var Sprites SpriteBatch
+
+var started bool = false
 
 func Run(_app *App) {
 	appRef = _app
@@ -60,6 +63,9 @@ func Run(_app *App) {
 	canvas.Set("height", _app.Height)
 
 	glRef = *webgl2.RenderingContextFromJS(canvasContext)
+
+	glRef.BlendFunc(webgl2.SRC_ALPHA, webgl2.ONE_MINUS_SRC_ALPHA)
+	glRef.Enable(webgl2.BLEND)
 
 	tempStart = _app.OnStart
 	tempUpdate = _app.OnUpdate
@@ -82,7 +88,9 @@ func Run(_app *App) {
 	Cam.Init(*_app)
 	Cam.Update(*_app)
 
-	Shapes.Init(_app)
+	Shapes.Init()
+	Sprites.Init()
+	glRef.Viewport(0, 0, appRef.Width, appRef.Height)
 
 	addEventListenerWindow(JS_KEYUP, func(ae *AppEvent) {
 		_app.OnEvent(ae)
@@ -111,7 +119,9 @@ func Run(_app *App) {
 	//UnuseShader()
 	//custom_func("STRING") ------- (1)
 	_app.OnStart()
-
+	if !started {
+		started = true
+	}
 	select {}
 }
 
@@ -131,6 +141,9 @@ func Run(_app *App) {
 // }
 
 func JSUpdate(this js.Value, inputs []js.Value) interface{} {
+	if !started {
+		return nil
+	}
 	currentWidth = canvas.Get("width").Int()
 	currentHeight = canvas.Get("height").Int()
 	tempUpdate(inputs[0].Float())
@@ -140,12 +153,16 @@ func JSUpdate(this js.Value, inputs []js.Value) interface{} {
 }
 
 func JSDraw(this js.Value, inputs []js.Value) interface{} {
+	if !started {
+		return nil
+	}
 	glRef.Viewport(0, 0, currentWidth, currentHeight)
-	glRef.ClearColor(0.0, 0.0, 0.0, 1.0)
+	glRef.ClearColor(1.0, 1.0, 1.0, 1.0)
 	glRef.Clear(webgl2.COLOR_BUFFER_BIT)
 
 	//Shapes.DrawLine(NewVector2f(0.0, 0.0), NewVector2f(2.5, 0.5), RGBA8{255, 255, 0, 255})
 	tempDraw()
+	Sprites.Render(&Cam)
 	Shapes.Render(&Cam)
 	return nil
 }

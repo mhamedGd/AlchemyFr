@@ -17,6 +17,8 @@ func main() {
 
 	var inputAxis alchemy.Vector2f = alchemy.Vector2fZero
 	var dpad_modifier alchemy.Vector2f = alchemy.Vector2fZero
+
+	var bgl_texture alchemy.Texture2D
 	game := alchemy.App{
 		Width:  800,
 		Height: 600,
@@ -36,7 +38,9 @@ func main() {
 
 			alchemy.Shapes.LineWidth = 1
 
-			alchemy.LoadPng("g.png")
+			bgl_texture = alchemy.LoadPng("Assets/Asset 2.png")
+			alchemy.LogF("Texture Width: %v", bgl_texture.Width)
+			alchemy.LogF("%v", bgl_texture)
 
 			alchemy.MainButton_Pressed.AddListener(func(i ...int) {
 				dpad_modifier.Y += 1.0
@@ -93,6 +97,8 @@ func main() {
 			alchemy.Shapes.DrawFillRectRotated(midScreen, alchemy.Vector2fOne.Scale(50.0), alchemy.NewRGBA8(255, 100, 230, 255), rotation)
 			//alchemy.Shapes.DrawRect(midPoint, alchemy.NewVector2f(10, 10), alchemy.NewRGBA8(255, 255, 0, 255))
 			alchemy.Shapes.DrawTriangleRotated(midPoint, alchemy.NewVector2f(10.0, 20.0), alchemy.NewRGBA8(255, 0, 0, 255), rotation)
+			alchemy.Sprites.DrawSprite(alchemy.Vector2fOne.Scale(150.0), alchemy.NewVector2f(75, 105), alchemy.Vector2fZero, alchemy.Vector2fOne, &bgl_texture, alchemy.NewRGBA8(255, 255, 255, 255))
+
 		},
 		OnEvent: func(ae *alchemy.AppEvent) {
 

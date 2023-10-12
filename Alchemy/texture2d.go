@@ -1,7 +1,6 @@
 package alchemy
 
 import (
-	"fmt"
 	"image/png"
 	"net/http"
 	"reflect"
@@ -26,24 +25,22 @@ func New(r, g, b, a uint8) Pixel {
 	return pixel
 }
 
-func LoadPng(_filePath string) {
+func LoadPng(_filePath string) Texture2D {
 
 	var tempTexture Texture2D
 
 	resp, err := http.Get(app_url + "/" + _filePath)
 	if err != nil {
-		fmt.Printf("%v\n", err.Error())
+		LogF("%v\n", err.Error())
 	}
 	img, err := png.Decode(resp.Body)
 	if err != nil {
-		fmt.Printf("%v\n", err.Error())
+		LogF("%v\n", err.Error())
 	}
-	fmt.Printf("%v\n", img.Bounds().Dx())
 
 	resp.Body.Close()
 
 	tempTexture.Width = img.Bounds().Dx()
-	LogF("%v", img.Bounds().Dx())
 	tempTexture.Height = img.Bounds().Dy()
 	pixels := make([]Pixel, tempTexture.Height*tempTexture.Width)
 
@@ -74,4 +71,5 @@ func LoadPng(_filePath string) {
 
 	canvasContext.Call("texImage2D", canvasContext.Get("TEXTURE_2D"), 0, canvasContext.Get("RGBA8"), tempTexture.Width, tempTexture.Height, 0, canvasContext.Get("RGBA"), canvasContext.Get("UNSIGNED_BYTE"), jsPixels)
 	//glRef.TexImage2D(webgl.TEXTURE_2D, 0, int(webgl2.RGBA8), tempTexture.Width, tempTexture.Height, 0, webgl2.RGBA, webgl2.UNSIGNED_BYTE, pixels)
+	return tempTexture
 }
