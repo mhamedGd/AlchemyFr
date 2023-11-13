@@ -157,7 +157,7 @@ func JSDraw(this js.Value, inputs []js.Value) interface{} {
 		return nil
 	}
 	glRef.Viewport(0, 0, currentWidth, currentHeight)
-	glRef.ClearColor(1.0, 1.0, 1.0, 1.0)
+	glRef.ClearColor(0.6, 0.3, 0.0, 1.0)
 	glRef.Clear(webgl2.COLOR_BUFFER_BIT)
 
 	//Shapes.DrawLine(NewVector2f(0.0, 0.0), NewVector2f(2.5, 0.5), RGBA8{255, 255, 0, 255})

@@ -448,6 +448,11 @@ func (self *SpriteBatch) DrawSprite(_center, _dimensions, _uv1, _uv2 Vector2f, _
 	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_center, _dimensions, _uv1, _uv2, _texture, _tint))
 }
 
+func (self *SpriteBatch) DrawSpriteOrigin(_center, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
+	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_center, NewVector2f(float32(_texture.Width), float32(_texture.Height)), _uv1, _uv2, _texture, _tint))
+
+}
+
 func (self *SpriteBatch) finalize() {
 	self.createRenderBatches()
 
@@ -484,7 +489,6 @@ func (self *SpriteBatch) Render(cam *Camera2D) {
 
 	glRef.BindVertexArray(self.vao)
 	for i := 0; i < len(self.renderBatches); i++ {
-		LogF("%v", self.renderBatches[i].texture)
 		//glRef.BindTexture(webgl2.TEXTURE_2D, self.renderBatches[i].texture.textureId)
 		canvasContext.Call("bindTexture", canvasContext.Get("TEXTURE_2D"), self.renderBatches[i].texture.textureId.Value_JS)
 		glRef.DrawArrays(webgl.TRIANGLES, self.renderBatches[i].offset, self.renderBatches[i].numberOfVertices)
@@ -521,8 +525,8 @@ func (self *SpriteBatch) createRenderBatches() {
 	offset += 6
 
 	for i := 1; i < len(self.spriteGlyphs); i++ {
-		if reflect.DeepEqual(self.spriteGlyphs[i-1].textureId, self.spriteGlyphs[i].textureId) {
-			self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, vertexNum, self.spriteGlyphs[0].textureId))
+		if self.spriteGlyphs[i-1].textureId.textureId != self.spriteGlyphs[i].textureId.textureId {
+			self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, vertexNum, self.spriteGlyphs[i].textureId))
 		} else {
 			self.renderBatches[len(self.renderBatches)-1].numberOfVertices += 6
 		}
