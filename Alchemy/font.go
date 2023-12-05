@@ -4,12 +4,40 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gowebapi/webapi/graphics/webgl"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
+
 	"golang.org/x/image/math/fixed"
 )
 
-func LoadFont(_fontPath string) Texture2D {
+type FontBatch struct {
+	charSet      map[rune]CharGlyph
+	sPatch       SpriteBatch
+	fontSettings FontBatchSettings
+}
+
+type CharGlyph struct {
+	textureId     Texture2D
+	size, bearing Vector2f
+	advance       float32
+}
+
+type FontBatchSettings struct {
+	FontSize, DPI, CharDistance, LineHeight float32
+}
+
+func (self *FontBatch) Init() {
+	self.charSet = make(map[rune]CharGlyph)
+	self.sPatch.Init("")
+	glRef.PixelStorei(webgl.UNPACK_ALIGNMENT, 1)
+}
+
+func LoadFont(_fontPath string, _fontSettings *FontBatchSettings) FontBatch {
+	var tempFont FontBatch
+	tempFont.Init()
+	tempFont.fontSettings = *_fontSettings
+
 	resp, err := http.Get(app_url + "/" + _fontPath)
 	if err != nil {
 		LogF(err.Error())
@@ -23,28 +51,72 @@ func LoadFont(_fontPath string) Texture2D {
 
 	f, err := opentype.Parse(data)
 
-	// glyphIndex, err := f.GlyphIndex(buff, 'C')
-	// if err != nil {
-	// 	LogF(err.Error())
-	// }
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{
-		Size:    32,
-		DPI:     512,
+		Size:    float64(_fontSettings.FontSize),
+		DPI:     float64(_fontSettings.DPI),
 		Hinting: font.HintingFull,
 	})
-
 	if err != nil {
 		LogF(err.Error())
 	}
 
 	dot := fixed.Point26_6{fixed.Int26_6(face.Metrics().Ascent), 0}
-	_, ima, _, _, ok := face.Glyph(dot, 'A')
-	if !ok {
-		LogF("Failed to load Glyph")
+	for i := 32; i < 127; i++ {
+		char := rune(i)
+
+		_, img, _, ad, ok := face.Glyph(dot, char)
+
+		if !ok {
+			LogF("Failed to load rune: %v", char)
+		}
+
+		if char == ' ' {
+			tempFont.charSet[char] = CharGlyph{textureId: Texture2D{}, size: Vector2fZero, bearing: Vector2fOne, advance: float32(ad) / float32(1<<6)}
+			continue
+		}
+
+		bounds, _, ok := face.GlyphBounds(char)
+		if !ok {
+			LogF("Failed to load bounds of rune: %v", char)
+		}
+
+		texture := LoadTextureFromImg(img)
+
+		charGlyph := CharGlyph{
+			texture,
+			NewVector2f(float32(texture.Width), float32(texture.Height)),
+			NewVector2f(float32(bounds.Max.X)/64.0, float32(-bounds.Max.Y)/64.0),
+			float32(ad) / 64.0,
+		}
+
+		tempFont.charSet[char] = charGlyph
 	}
 
-	//img := image.NewAlpha(dr)
+	return tempFont
+}
 
-	tempT := LoadImageFromImg(ima)
-	return tempT
+func (self *FontBatch) DrawString(_text string, _position Vector2f, _scale float32, _tint RGBA8) {
+	originalPos := _position
+	cameraRelatedScale := _scale
+
+	for i := 0; i < len(_text); i++ {
+		charglyph := self.charSet[rune(_text[i])]
+
+		if rune(_text[i]) == ' ' {
+			originalPos.X += charglyph.advance * cameraRelatedScale
+			continue
+		}
+		loc_pos := originalPos
+		//loc_pos.X += charglyph.bearing.X * cameraRelatedScale
+		loc_pos.Y += (charglyph.bearing.Y) * cameraRelatedScale
+		//Shapes.DrawRect(loc_pos, charglyph.size.Scale(cameraRelatedScale), NewRGBA8(255, 255, 255, 255))
+		self.sPatch.DrawSpriteBottomLeft(loc_pos, charglyph.size.Scale(cameraRelatedScale), Vector2fZero, Vector2fOne, &charglyph.textureId, _tint)
+		if i < len(_text)-1 {
+			originalPos.X += charglyph.advance * cameraRelatedScale
+		}
+	}
+}
+
+func (self *FontBatch) Render() {
+	self.sPatch.Render(&Cam)
 }

@@ -43,12 +43,13 @@ func LoadPng(_filePath string) Texture2D {
 
 	tempTexture.Width = img.Bounds().Dx()
 	tempTexture.Height = img.Bounds().Dy()
+
 	pixels := make([]Pixel, tempTexture.Height*tempTexture.Width)
 
 	for y := 0; y < tempTexture.Height; y++ {
 		for x := 0; x < tempTexture.Width; x++ {
 			r, g, b, a := img.At(x, y).RGBA()
-			pixels[y*tempTexture.Width+x] = New(uint8(r), uint8(g), uint8(b), uint8(a))
+			pixels[y*tempTexture.Width+x] = New(uint8(r>>8), uint8(g>>8), uint8(b>>8), uint8(a))
 		}
 	}
 
@@ -58,6 +59,8 @@ func LoadPng(_filePath string) Texture2D {
 
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, int(webgl.NEAREST))
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, int(webgl.NEAREST))
+	//canvasContext.Call("texParameteri", canvasContext.Get("TEXTURE_2D"), canvasContext.Get("TEXTURE_MIN_FILTER"), canvasContext.Get("NEAREST"))
+	//canvasContext.Call("texParameteri", canvasContext.Get("TEXTURE_2D"), canvasContext.Get("TEXTURE_MAG_FILTER"), canvasContext.Get("NEAREST"))
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, int(webgl.CLAMP_TO_EDGE))
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, int(webgl.CLAMP_TO_EDGE))
 
@@ -75,11 +78,16 @@ func LoadPng(_filePath string) Texture2D {
 	return tempTexture
 }
 
-func LoadImageFromImg(img image.Image) Texture2D {
+func LoadTextureFromImg(img image.Image) Texture2D {
 	var tempTexture Texture2D
 
 	tempTexture.Width = img.Bounds().Dx()
 	tempTexture.Height = img.Bounds().Dy()
+
+	if tempTexture.Height <= 0 || tempTexture.Width <= 0 {
+		LogF("Loaded Image has zero dimensions")
+	}
+
 	pixels := make([]Pixel, tempTexture.Height*tempTexture.Width)
 
 	for y := 0; y < tempTexture.Height; y++ {

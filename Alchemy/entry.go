@@ -64,7 +64,8 @@ func Run(_app *App) {
 
 	glRef = *webgl2.RenderingContextFromJS(canvasContext)
 
-	glRef.BlendFunc(webgl2.SRC_ALPHA, webgl2.ONE_MINUS_SRC_ALPHA)
+	//glRef.BlendFunc(webgl2.SRC_ALPHA, webgl2.ONE_MINUS_SRC_ALPHA)
+	glRef.BlendFuncSeparate(webgl2.SRC_ALPHA, webgl2.ONE_MINUS_SRC_ALPHA, webgl2.ONE, webgl2.ONE)
 	glRef.Enable(webgl2.BLEND)
 
 	tempStart = _app.OnStart
@@ -89,7 +90,7 @@ func Run(_app *App) {
 	Cam.Update(*_app)
 
 	Shapes.Init()
-	Sprites.Init()
+	Sprites.Init("")
 	glRef.Viewport(0, 0, appRef.Width, appRef.Height)
 
 	addEventListenerWindow(JS_KEYUP, func(ae *AppEvent) {
@@ -157,7 +158,7 @@ func JSDraw(this js.Value, inputs []js.Value) interface{} {
 		return nil
 	}
 	glRef.Viewport(0, 0, currentWidth, currentHeight)
-	glRef.ClearColor(0.6, 0.3, 0.0, 1.0)
+	glRef.ClearColor(0.1, 0.0, 0.2, 1.0)
 	glRef.Clear(webgl2.COLOR_BUFFER_BIT)
 
 	//Shapes.DrawLine(NewVector2f(0.0, 0.0), NewVector2f(2.5, 0.5), RGBA8{255, 255, 0, 255})

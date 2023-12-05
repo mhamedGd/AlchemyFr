@@ -67,6 +67,7 @@ func (_sp *ShaderProgram) ParseShaderFromFile(_filePath string) {
 		} else {
 			Assert(current_type != -1, "Parse Shader: shader should start with #shader vertex/fragment")
 			shaders[current_type] += scanner.Text()
+			shaders[current_type] += string('\n')
 		}
 	}
 

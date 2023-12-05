@@ -97,42 +97,41 @@ func (_shapesB *ShapeBatch) Init() {
 	glRef.DisableVertexAttribArray(1)
 	glRef.DisableVertexAttribArray(2)
 
-	vertexShader := `#version 300 es
+	// vertexShader := `#version 300 es
 
-	precision mediump float;
+	// precision mediump float;
 
-	in vec2 coordinates;
-	in vec4 colors;
+	// in vec2 coordinates;
+	// in vec4 colors;
 
-	out vec4 vertex_FragColor;
+	// out vec4 vertex_FragColor;
 
-	uniform mat4 projection_matrix;
-	uniform mat4 view_matrix;
+	// uniform mat4 projection_matrix;
+	// uniform mat4 view_matrix;
 
-	void main(void) {
-		vec4 global_position = vec4(0.0);
-		global_position = view_matrix * vec4(coordinates, 0.0, 1.0);
-		global_position.z = 0.0;
-		global_position.w = 1.0;		
-		gl_Position = global_position;
-		
-		
-		vertex_FragColor = colors;
-	}`
+	// void main(void) {
+	// 	vec4 global_position = vec4(0.0);
+	// 	global_position = view_matrix * vec4(coordinates, 0.0, 1.0);
+	// 	global_position.z = 0.0;
+	// 	global_position.w = 1.0;
+	// 	gl_Position = global_position;
 
-	fragmentShader := `#version 300 es
+	// 	vertex_FragColor = colors;
+	// }`
 
-	precision mediump float;
+	// fragmentShader := `#version 300 es
 
-	in vec4 vertex_FragColor;
+	// precision mediump float;
 
-	out vec4 fragColor;
-	void main(void) {
-		fragColor = vertex_FragColor;
-	}`
+	// in vec4 vertex_FragColor;
 
-	_shapesB.Shader.ParseShader(vertexShader, fragmentShader)
-	//_shapesB.Shader.ParseShaderFromFile("shapes.shader")
+	// out vec4 fragColor;
+	// void main(void) {
+	// 	fragColor = vertex_FragColor;
+	// }`
+
+	//_shapesB.Shader.ParseShader(vertexShader, fragmentShader)
+	_shapesB.Shader.ParseShaderFromFile("shapes.shader")
 	_shapesB.Shader.CreateShaderProgram()
 	_shapesB.Shader.AddAttribute("coordinates")
 	_shapesB.Shader.AddAttribute("colors")
@@ -331,7 +330,7 @@ func (_sp *ShapeBatch) Render(cam *Camera2D) {
 
 type SpriteGlyph struct {
 	bottomleft, topleft, topright, bottomright Vertex
-	textureId                                  *Texture2D
+	texture                                    *Texture2D
 }
 
 func NewSpriteGlyph(_pos, _dimensions, _uv1 Vector2f, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) SpriteGlyph {
@@ -344,7 +343,7 @@ func NewSpriteGlyph(_pos, _dimensions, _uv1 Vector2f, _uv2 Vector2f, _texture *T
 	tempGlyph.topright = NewVertex(_pos.Add(halfDim), NewVector2f(_uv2.X, _uv1.Y), _tint)
 	tempGlyph.bottomright = NewVertex(_pos.Add(NewVector2f(halfDim.X, -halfDim.Y)), _uv2, _tint)
 
-	tempGlyph.textureId = _texture
+	tempGlyph.texture = _texture
 
 	return tempGlyph
 }
@@ -368,7 +367,7 @@ type SpriteBatch struct {
 	spriteGlyphs  []SpriteGlyph
 }
 
-func (self *SpriteBatch) Init() {
+func (self *SpriteBatch) Init(_shader_path string) {
 
 	self.renderBatches = make([]RenderBatch, 0)
 	self.spriteGlyphs = make([]SpriteGlyph, 0)
@@ -394,49 +393,53 @@ func (self *SpriteBatch) Init() {
 	glRef.DisableVertexAttribArray(1)
 	glRef.DisableVertexAttribArray(2)
 
-	vertexShader := `#version 300 es
+	// vertexShader := `#version 300 es
 
-	precision mediump float;
+	// precision mediump float;
 
-	in vec2 coordinates;
-	in vec4 colors;
-	in vec2 uv;
+	// in vec2 coordinates;
+	// in vec4 colors;
+	// in vec2 uv;
 
-	out vec4 vertex_FragColor;
-	out vec2 vertex_UV;
+	// out vec4 vertex_FragColor;
+	// out vec2 vertex_UV;
 
-	uniform mat4 projection_matrix;
-	uniform mat4 view_matrix;
+	// uniform mat4 projection_matrix;
+	// uniform mat4 view_matrix;
 
-	void main(void) {
-		vec4 global_position = vec4(0.0);
-		global_position = view_matrix * vec4(coordinates, 0.0, 1.0);
-		global_position.z = 0.0;
-		global_position.w = 1.0;		
-		gl_Position = global_position;
-		
-		
-		vertex_FragColor = colors;
-		vertex_UV = uv;
-	}`
+	// void main(void) {
+	// 	vec4 global_position = vec4(0.0);
+	// 	global_position = view_matrix * vec4(coordinates, 0.0, 1.0);
+	// 	global_position.z = 0.0;
+	// 	global_position.w = 1.0;
+	// 	gl_Position = global_position;
 
-	fragmentShader := `#version 300 es
+	// 	vertex_FragColor = colors;
+	// 	vertex_UV = uv;
+	// }`
 
-	precision mediump float;
+	// fragmentShader := `#version 300 es
 
-	in vec4 vertex_FragColor;
-	in vec2 vertex_UV;
+	// precision mediump float;
 
-	uniform sampler2D genericSampler;
+	// in vec4 vertex_FragColor;
+	// in vec2 vertex_UV;
 
-	out vec4 fragColor;
+	// uniform sampler2D genericSampler;
 
-	void main(void) {
-		vec4 thisColor = vertex_FragColor * texture(genericSampler, vertex_UV);
-		fragColor = thisColor;
-	}`
+	// out vec4 fragColor;
 
-	self.shader.ParseShader(vertexShader, fragmentShader)
+	// void main(void) {
+	// 	vec4 thisColor = vertex_FragColor * texture(genericSampler, vertex_UV);
+	// 	fragColor = thisColor;
+	// }`
+
+	//self.shader.ParseShader(vertexShader, fragmentShader)
+	if _shader_path == "" {
+		self.shader.ParseShaderFromFile("sprites.shader")
+	} else {
+		self.shader.ParseShaderFromFile(_shader_path)
+	}
 	self.shader.CreateShaderProgram()
 	self.shader.AddAttribute("coordinates")
 	self.shader.AddAttribute("colors")
@@ -450,6 +453,14 @@ func (self *SpriteBatch) DrawSprite(_center, _dimensions, _uv1, _uv2 Vector2f, _
 
 func (self *SpriteBatch) DrawSpriteOrigin(_center, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
 	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_center, NewVector2f(float32(_texture.Width), float32(_texture.Height)), _uv1, _uv2, _texture, _tint))
+
+}
+func (self *SpriteBatch) DrawSpriteBottomLeft(_pos, _dimensions, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
+	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_pos.Add(_dimensions.Scale(0.5)), _dimensions, _uv1, _uv2, _texture, _tint))
+
+}
+func (self *SpriteBatch) DrawSpriteBottomLeftOrigin(_pos, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
+	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_pos.Subtract(NewVector2f(float32(_texture.Width), float32(_texture.Height)).Scale(0.5)), NewVector2f(float32(_texture.Width), float32(_texture.Height)), _uv1, _uv2, _texture, _tint))
 
 }
 
@@ -509,7 +520,7 @@ func (self *SpriteBatch) createRenderBatches() {
 	offset := 0
 	vertexNum := 0
 
-	self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, 6, self.spriteGlyphs[0].textureId))
+	self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, 6, self.spriteGlyphs[0].texture))
 	vertices[vertexNum] = self.spriteGlyphs[0].bottomleft
 	vertexNum++
 	vertices[vertexNum] = self.spriteGlyphs[0].topright
@@ -525,8 +536,8 @@ func (self *SpriteBatch) createRenderBatches() {
 	offset += 6
 
 	for i := 1; i < len(self.spriteGlyphs); i++ {
-		if self.spriteGlyphs[i-1].textureId.textureId != self.spriteGlyphs[i].textureId.textureId {
-			self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, vertexNum, self.spriteGlyphs[i].textureId))
+		if self.spriteGlyphs[i-1].texture.textureId != self.spriteGlyphs[i].texture.textureId {
+			self.renderBatches = append(self.renderBatches, NewRenderBatch(offset, 6, self.spriteGlyphs[i].texture))
 		} else {
 			self.renderBatches[len(self.renderBatches)-1].numberOfVertices += 6
 		}

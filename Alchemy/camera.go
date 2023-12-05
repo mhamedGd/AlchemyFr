@@ -29,8 +29,8 @@ func (cam *Camera2D) Update(_app App) {
 		return
 	}
 
-	cam.viewMatrix = Translate(cam.projectMatrix, -cam.position.X, -cam.position.Y, 0.0, 1.0, cam.scale)
-	cam.mustUpdate = true
+	cam.viewMatrix = Translate(cam.projectMatrix, -cam.position.X+float32(_app.Width)/2.0, -cam.position.Y+float32(_app.Height)/2.0, 0.0, 1.0, cam.scale)
+	cam.mustUpdate = false
 }
 
 func Ortho(left, right, bottom, top, near, far float32) goglmath.Matrix4 {
