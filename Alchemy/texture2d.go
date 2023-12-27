@@ -101,6 +101,8 @@ func LoadTextureFromImg(img image.Image) Texture2D {
 	glRef.ActiveTexture(webgl.TEXTURE0)
 	glRef.BindTexture(webgl.TEXTURE_2D, tempTexture.textureId)
 
+	glRef.PixelStorei(webgl.UNPACK_ALIGNMENT, 1)
+
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, int(webgl.NEAREST))
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, int(webgl.NEAREST))
 	glRef.TexParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, int(webgl.CLAMP_TO_EDGE))
