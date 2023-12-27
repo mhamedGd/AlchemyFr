@@ -1,6 +1,9 @@
 package alchemy
 
 import (
+	"image"
+	"image/color"
+	"image/draw"
 	"io"
 	"net/http"
 
@@ -119,4 +122,66 @@ func (self *FontBatch) DrawString(_text string, _position Vector2f, _scale float
 
 func (self *FontBatch) Render() {
 	self.sPatch.Render(&Cam)
+}
+
+func CreateFontAtlas(_fontPath string, _fontSettings *FontBatchSettings) Texture2D {
+	resp, err := http.Get(app_url + "/" + _fontPath)
+	if err != nil {
+		LogF(err.Error())
+	}
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		LogF(err.Error())
+	}
+
+	f, err := opentype.Parse(data)
+
+	face, err := opentype.NewFace(f, &opentype.FaceOptions{
+		Size:    float64(_fontSettings.FontSize),
+		DPI:     float64(_fontSettings.DPI),
+		Hinting: font.HintingFull,
+	})
+	if err != nil {
+		LogF(err.Error())
+	}
+
+	max_width, max_height := int(0), int(0)
+
+	dot := fixed.Point26_6{fixed.Int26_6(face.Metrics().Ascent), 0}
+	for i := 33; i < 127; i++ {
+		char := rune(i)
+
+		_, img, _, _, ok := face.Glyph(dot, char)
+
+		if !ok {
+			LogF("Failed to load rune: %v", char)
+		}
+
+		max_width += img.Bounds().Dx()
+		if max_height < img.Bounds().Dy() {
+			max_height = img.Bounds().Dy()
+		}
+	}
+
+	atlas_img := image.NewRGBA(image.Rect(0, 0, max_width, max_height))
+	draw.Draw(atlas_img, atlas_img.Bounds(), &image.Uniform{color.RGBA{200, 100, 0, 255}}, image.ZP, draw.Src)
+
+	x_offset := 0
+	y_offset := 0
+	for i := 33; i < 127; i++ {
+		char := rune(i)
+		_, img, _, _, ok := face.Glyph(dot, char)
+		y_offset = img.Bounds().Dy()
+		if !ok {
+			LogF("Failed To Draw Letter: %v", char)
+		}
+		draw.Draw(atlas_img, image.Rect(x_offset, 0, x_offset+img.Bounds().Dx(), y_offset), img, image.ZP, draw.Src)
+		x_offset += img.Bounds().Dx()
+
+	}
+
+	var tTexture = LoadTextureFromImg(atlas_img)
+	return tTexture
 }

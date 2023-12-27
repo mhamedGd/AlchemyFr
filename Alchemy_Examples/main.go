@@ -22,6 +22,7 @@ func main() {
 	//var tile alchemy.Texture2D
 	//var mapp alchemy.Texture2D
 	var font alchemy.FontBatch
+	var fontAtlas alchemy.Texture2D
 	game := alchemy.App{
 		Width:  1920,
 		Height: 1080,
@@ -82,6 +83,7 @@ func main() {
 			}
 
 			font = alchemy.LoadFont("Assets/Arslan.ttf", &font_settings)
+			fontAtlas = alchemy.CreateFontAtlas("Assets/m5x7.ttf", &font_settings)
 			alchemy.ScaleView(4)
 		},
 		OnUpdate: func(dt float64) {
@@ -108,6 +110,7 @@ func main() {
 			//alchemy.Shapes.DrawRect(midPoint, alchemy.NewVector2f(10, 10), alchemy.NewRGBA8(255, 255, 0, 255))
 			alchemy.Shapes.DrawTriangleRotated(midPoint, alchemy.NewVector2f(2.0, 4.0), alchemy.NewRGBA8(255, 0, 0, 255), rotation)
 			alchemy.Sprites.DrawSpriteOrigin(alchemy.NewVector2f(2, 0.0), alchemy.Vector2fZero, alchemy.Vector2fOne, &bgl_texture, alchemy.NewRGBA8(255, 255, 255, 255))
+			alchemy.Sprites.DrawSpriteOriginScaled(alchemy.NewVector2f(0.0, 32.0), alchemy.Vector2fZero, alchemy.Vector2fOne, 0.125, &fontAtlas, alchemy.NewRGBA8(255, 255, 255, 255))
 			//alchemy.Sprites.DrawSpriteOrigin(alchemy.NewVector2f(2, -50.0), alchemy.Vector2fZero, alchemy.Vector2fOne, &mapp, alchemy.NewRGBA8(255, 255, 255, 255))
 			//alchemy.Sprites.DrawSpriteOrigin(alchemy.NewVector2f(2, 50.0), alchemy.Vector2fZero, alchemy.Vector2fOne, &tile, alchemy.NewRGBA8(255, 255, 255, 255))
 			for i := 0; i < 1; i++ {
