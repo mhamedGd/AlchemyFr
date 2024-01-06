@@ -1,3 +1,7 @@
+github.com/01walid/goarabic v0.0.1 h1:3zZHwUpdYTnFlPuKzwD/j/xinIhAeFEoq61aFMJKV9s=
+github.com/01walid/goarabic v0.0.1/go.mod h1:Q+FvyKHDS8E3qNzZ76sdyr2D6yYeDW2QRY0t4Mx4CZI=
+github.com/abdullahdiaa/garabic v0.0.0-20230105201152-4c3eb72be29c h1:hv0YuxeTc/3d90YPDZIzWeYGLoLI1oNk/xcyZ94oI1o=
+github.com/abdullahdiaa/garabic v0.0.0-20230105201152-4c3eb72be29c/go.mod h1:JCJzUt3LLb+rVN+4v7lIBkXp+zmpt9Lz8HmeKjluEjY=
 github.com/danielgatis/go-findfont v1.0.1 h1:OgCyoo8OakOsBBK7+XUpEAQJxEXu1h6Us4wFm+xykSE=
 github.com/danielgatis/go-findfont v1.0.1/go.mod h1:q9XXqsU66wHmkDw0sCvpcZEHQp2AZyDOA4SieOUrnVo=
 github.com/danielgatis/go-freetype v0.0.0-20200926043333-689a6dd62194 h1:416svnDBgQEml+NnIjDl3ZPWXBSvnf74fZwD40qdbRw=
@@ -14,5 +18,7 @@ github.com/zhangzpap/freetype-go v0.0.0-20150309003230-160e1d6137ce h1:YV57NKZD/
 github.com/zhangzpap/freetype-go v0.0.0-20150309003230-160e1d6137ce/go.mod h1:Qh6A1oFd3JIXx/J/BXeAAD4LLrA63zqd7+RfeLefGC8=
 golang.org/x/image v0.14.0 h1:tNgSxAFe3jC4uYqvZdTr84SZoM1KfwdC9SKIFrLjFn4=
 golang.org/x/image v0.14.0/go.mod h1:HUYqC05R2ZcZ3ejNQsIHQDQiwWM4JBqmm6MKANTp4LE=
+golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/text v0.14.0 h1:ScX5w1eTa3QqT8oi6+ziP7dTV1S2+ALU0bI+0zXKWiQ=
 golang.org/x/text v0.14.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
+golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

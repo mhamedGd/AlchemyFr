@@ -46,31 +46,39 @@
             go.run(result.instance);
             
             //------
-            dpad_up.addEventListener("pointerdown", (e) => {
+            dpad_up.addEventListener("touchstart", (e) => {
+                e.preventDefault()
                 js_dpad_up(1)
             })
-            dpad_up.addEventListener("pointerup", (e) => {
+            dpad_up.addEventListener("touchend", (e) => {
+                e.preventDefault()
                 js_dpad_up(0)
             })
             //------
-            dpad_down.addEventListener("pointerdown", (e) => {
+            dpad_down.addEventListener("touchstart", (e) => {
+                e.preventDefault()
                 js_dpad_down(1)
             })
-            dpad_down.addEventListener("pointerup", (e) => {
+            dpad_down.addEventListener("touchend", (e) => {
+                e.preventDefault()
                 js_dpad_down(0)
             })
             //------
-            dpad_left.addEventListener("pointerdown", (e) => {
+            dpad_left.addEventListener("touchstart", (e) => {
+                e.preventDefault()
                 js_dpad_left(1)
             })
-            dpad_left.addEventListener("pointerup", (e) => {
+            dpad_left.addEventListener("touchend", (e) => {
+                e.preventDefault()
                 js_dpad_left(0)
             })
             //------
-            dpad_right.addEventListener("pointerdown", (e) => {
+            dpad_right.addEventListener("touchstart", (e) => {
+                e.preventDefault()
                 js_dpad_right(1)
             })
-            dpad_right.addEventListener("pointerup", (e) => {
+            dpad_right.addEventListener("touchend", (e) => {
+                e.preventDefault()
                 js_dpad_right(0)
             })
             //------

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"math"
-	"reflect"
 	"syscall/js"
 	"unsafe"
 
@@ -35,6 +34,8 @@ type RGBA8 struct {
 func NewRGBA8(r, g, b, a uint8) RGBA8 {
 	return RGBA8{r, g, b, a}
 }
+
+var WHITE = RGBA8{255, 255, 255, 255}
 
 const VertexSize = 20
 
@@ -240,26 +241,10 @@ func (_sp *ShapeBatch) DrawFillRectRotated(_center, _dimensions Vector2f, _color
 }
 
 func (_sp *ShapeBatch) finalize() {
-
 	glRef.BindVertexArray(_sp.VAO)
 
-	jsVerts := js.Global().Get("Uint8Array").New(len(_sp.Vertices) * VertexSize)
-	var verticesBytes []byte
-	header := (*reflect.SliceHeader)(unsafe.Pointer(&verticesBytes))
-	header.Cap = cap(_sp.Vertices) * VertexSize
-	header.Len = len(_sp.Vertices) * VertexSize
-	header.Data = uintptr(unsafe.Pointer(&_sp.Vertices[0]))
-
-	js.CopyBytesToJS(jsVerts, verticesBytes)
-
-	jsElem := js.Global().Get("Uint8Array").New(len(_sp.Indices) * 4)
-	var elementsBytes []byte
-	headerElem := (*reflect.SliceHeader)(unsafe.Pointer(&elementsBytes))
-	headerElem.Cap = cap(_sp.Indices) * 4
-	headerElem.Len = len(_sp.Indices) * 4
-	headerElem.Data = uintptr(unsafe.Pointer(&_sp.Indices[0]))
-
-	js.CopyBytesToJS(jsElem, elementsBytes)
+	jsVerts := vertexBufferToJsVertexBuffer(_sp.Vertices)
+	jsElem := int32BufferToJsInt32Buffer(_sp.Indices)
 
 	canvasContext.Call("bindBuffer", canvasContext.Get("ARRAY_BUFFER"), _sp.VBO.Value_JS)
 	canvasContext.Call("bufferData", canvasContext.Get("ARRAY_BUFFER"), jsVerts, canvasContext.Get("STATIC_DRAW"))
@@ -359,6 +344,7 @@ func NewRenderBatch(_offset, _numberOfVertices int, _texture *Texture2D) RenderB
 
 type SpriteBatch struct {
 	vbo *webgl.Buffer
+	ibo *webgl.Buffer
 	vao *webgl2.VertexArrayObject
 
 	shader ShaderProgram
@@ -461,7 +447,9 @@ func (self *SpriteBatch) DrawSpriteOriginScaled(_center, _uv1, _uv2 Vector2f, _s
 }
 func (self *SpriteBatch) DrawSpriteBottomLeft(_pos, _dimensions, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
 	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_pos.Add(_dimensions.Scale(0.5)), _dimensions, _uv1, _uv2, _texture, _tint))
-
+}
+func (self *SpriteBatch) DrawSpriteBottomRight(_pos, _dimensions, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
+	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_pos.AddXY(-_dimensions.Scale(0.5).X, _dimensions.Scale(0.5).Y), _dimensions, _uv1, _uv2, _texture, _tint))
 }
 func (self *SpriteBatch) DrawSpriteBottomLeftOrigin(_pos, _uv1, _uv2 Vector2f, _texture *Texture2D, _tint RGBA8) {
 	self.spriteGlyphs = append(self.spriteGlyphs, NewSpriteGlyph(_pos.Subtract(NewVector2f(float32(_texture.Width), float32(_texture.Height)).Scale(0.5)), NewVector2f(float32(_texture.Width), float32(_texture.Height)), _uv1, _uv2, _texture, _tint))
@@ -560,17 +548,9 @@ func (self *SpriteBatch) createRenderBatches() {
 		vertexNum++
 		offset += 6
 	}
-
 	glRef.BindBuffer(webgl.ARRAY_BUFFER, self.vbo)
 
-	jsVerts := js.Global().Get("Uint8Array").New(len(vertices) * VertexSize)
-	var verticesBytes []byte
-	header := (*reflect.SliceHeader)(unsafe.Pointer(&verticesBytes))
-	header.Cap = cap(vertices) * VertexSize
-	header.Len = len(vertices) * VertexSize
-	header.Data = uintptr(unsafe.Pointer(&vertices[0]))
-
-	js.CopyBytesToJS(jsVerts, verticesBytes)
+	jsVerts := vertexBufferToJsVertexBuffer(vertices)
 
 	canvasContext.Call("bufferData", canvasContext.Get("ARRAY_BUFFER"), jsVerts, canvasContext.Get("STATIC_DRAW"))
 
